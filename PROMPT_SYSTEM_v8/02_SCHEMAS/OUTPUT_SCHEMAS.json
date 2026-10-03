@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PROMPT SYSTEM v8 Output Contracts",
+  "description": "Schemas para artefatos do agente arquiteto de prompts. Use a definição apropriada em $defs.",
+  "$defs": {
+    "prompt_full": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "target", "identity", "mission", "scope", "rules", "workflow", "inputs", "outputs", "failure_handling", "validation", "style"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "target": { "type": "string", "description": "Plataforma indicada ou portátil." },
+        "identity": { "type": "string" },
+        "mission": { "type": "string" },
+        "scope": { "type": "array", "items": { "type": "string" } },
+        "rules": { "type": "array", "items": { "type": "string" } },
+        "workflow": { "type": "array", "items": { "type": "string" } },
+        "inputs": { "type": "array", "items": { "type": "string" } },
+        "outputs": { "type": "array", "items": { "type": "string" } },
+        "failure_handling": { "type": "array", "items": { "type": "string" } },
+        "validation": { "type": "array", "items": { "type": "string" } },
+        "style": { "type": "array", "items": { "type": "string" } },
+        "assumptions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "prompt_modular": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "target", "core_prompt", "modules", "load_order", "output_contract", "validation", "deployment_notes"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "target": { "type": "string" },
+        "core_prompt": { "type": "string", "minLength": 1 },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "purpose", "activation", "content"],
+            "properties": {
+              "id": { "type": "string" },
+              "purpose": { "type": "string" },
+              "activation": { "type": "string" },
+              "content": { "type": "string" }
+            }
+          }
+        },
+        "load_order": { "type": "array", "items": { "type": "string" } },
+        "output_contract": { "type": "array", "items": { "type": "string" } },
+        "validation": { "type": "array", "items": { "type": "string" } },
+        "deployment_notes": { "type": "array", "items": { "type": "string" } },
+        "assumptions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["diagnosis", "score", "score_basis", "strengths", "risks", "prioritized_changes", "revised_prompt"],
+      "properties": {
+        "diagnosis": { "type": "string" },
+        "score": { "type": "number", "minimum": 0, "maximum": 10 },
+        "score_basis": { "type": "string" },
+        "strengths": { "type": "array", "items": { "type": "string" } },
+        "risks": { "type": "array", "items": { "type": "string" } },
+        "prioritized_changes": { "type": "array", "items": { "type": "string" } },
+        "revised_prompt": { "type": ["string", "null"] }
+      }
+    },
+    "fail_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "fs_id", "reason", "action"],
+      "properties": {
+        "status": { "type": "string", "enum": ["FLAGGED", "HELD", "BLOCKED", "REROUTED"] },
+        "fs_id": { "type": "string" },
+        "reason": { "type": "string" },
+        "missing": { "type": "array", "items": { "type": "string" } },
+        "action": { "type": "string" },
+        "confidence": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW", "NONE"] }
+      }
+    },
+    "build_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "task", "files", "optional_files", "assumptions", "limitations"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["FAST", "MODULAR", "AUDIT", "DOMAIN", "EDUCATIONAL", "DSL", "PRODUCTION"] },
+        "task": { "type": "string" },
+        "files": { "type": "array", "items": { "type": "string" } },
+        "optional_files": { "type": "array", "items": { "type": "string" } },
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "limitations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "prompt_catalog_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "prompt_id", "primary_goal", "tags", "target_model", "output_type", "complexity", "template", "variables", "intended_context", "techniques", "version", "created_at", "origin", "assumptions"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "prompt_id": { "type": ["string", "null"], "description": "Nulo se não houver registro central capaz de garantir unicidade." },
+        "primary_goal": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "target_model": { "type": "string", "description": "Use Geral quando não houver requisito técnico que justifique um modelo específico." },
+        "output_type": { "type": "string" },
+        "complexity": { "type": "string", "enum": ["BEGINNER", "INTERMEDIATE", "ADVANCED", "UNDETERMINED"] },
+        "template": { "type": "string" },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "description", "required"],
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "required": { "type": "boolean" },
+              "example_value": { "type": "string" }
+            }
+          }
+        },
+        "intended_context": { "type": "string" },
+        "techniques": { "type": "array", "items": { "type": "string" } },
+        "version": { "type": "string" },
+        "created_at": { "type": ["string", "null"], "format": "date", "description": "Nulo quando a data não for conhecida." },
+        "origin": { "type": "string" },
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "example": { "type": ["string", "null"], "description": "Exemplo sintético opcional, identificado como fictício." },
+        "variation_ideas": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
